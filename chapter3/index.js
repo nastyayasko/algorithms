@@ -13,6 +13,24 @@ const getMax = list => {
 }
 
 // 3
+const addToTop = (list, value) => {
+  list[0].prev = value
+  const item ={value}
+  item.prev = null
+  item.next = list[0].value
+  list.unshift(item)
+  return list
+}
+
+// 4
+const addToBottom = (list, value) => {
+  list[list.length - 1].next = value
+  const item ={value}
+  item.prev = list[list.length - 1].value
+  item.next = null
+  list.push(item)
+  return list
+}
 
 // 6
 const removeListItem = (list, itemValue) => {
@@ -96,6 +114,8 @@ const isListWithLoop = list => {
 
 module.exports = {
   getMax,
+  addToTop,
+  addToBottom,
   removeListItem,
   insertValue,
   isSorted,

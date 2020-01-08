@@ -1,4 +1,13 @@
-const { getMax, removeListItem, insertValue, isSorted, getPlanetList, isListWithLoop } = require('./index')
+const {
+  getMax,
+  addToTop,
+  addToBottom,
+  removeListItem,
+  insertValue,
+  isSorted,
+  getPlanetList,
+  isListWithLoop
+} = require('./index')
 
 describe('Linked lists', () => {
   const list1 = [
@@ -48,6 +57,60 @@ describe('Linked lists', () => {
   it('get max value from list', () => {
     const max = getMax(list1)
     expect(max).toEqual(12)
+  })
+  it('add item to the top of list', () => {
+    const list = [
+      {
+        value: 'A',
+        prev: null,
+        next: 'B',
+      },
+      {
+        value: 'B',
+        prev: 'A',
+        next: 'C',
+      },
+      {
+        value: 'C',
+        prev: 'B',
+        next: 'D',
+      },
+      {
+        value: 'D',
+        prev: 'C',
+        next: null,
+      },
+    ]
+    const newList = addToTop(list, 'J')
+    expect(newList[0]).toEqual({value: 'J', prev: null, next: 'A'})
+    expect(newList[1]).toEqual({value: 'A', prev: 'J', next: 'B'})
+  })
+  it('add item to the bottom of list', () => {
+    const list = [
+      {
+        value: 'A',
+        prev: null,
+        next: 'B',
+      },
+      {
+        value: 'B',
+        prev: 'A',
+        next: 'C',
+      },
+      {
+        value: 'C',
+        prev: 'B',
+        next: 'D',
+      },
+      {
+        value: 'D',
+        prev: 'C',
+        next: null,
+      },
+    ]
+    const newList = addToBottom(list, 'J')
+    expect(newList[newList.length - 1]).toEqual({value: 'J', prev: 'D', next: null})
+    expect(newList[newList.length - 2]).toEqual({value: 'D', prev: 'C', next: 'J'})
   })
   it('remove item from list', () => {
     const newArr = removeListItem(list1, 2)
