@@ -14,6 +14,23 @@ const getMax = list => {
 
 // 3
 
+// 6
+const removeListItem = (list, itemValue) => {
+  let index;
+  const item = list.find((listItem, i) => {
+    if (listItem.value === itemValue) {
+      index = i
+      return listItem
+    }
+  })
+  list[index-1].next = item.next
+  if (item.next !== null) {
+    list[index+1].prev = item.prev
+  }
+  list.splice(index, 1)
+  return list
+}
+
 // 8
 
 const insertValue = (list, value) => {
@@ -79,6 +96,7 @@ const isListWithLoop = list => {
 
 module.exports = {
   getMax,
+  removeListItem,
   insertValue,
   isSorted,
   getPlanetList,

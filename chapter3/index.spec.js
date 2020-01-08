@@ -1,4 +1,4 @@
-const { getMax, insertValue, isSorted, getPlanetList, isListWithLoop } = require('./index')
+const { getMax, removeListItem, insertValue, isSorted, getPlanetList, isListWithLoop } = require('./index')
 
 describe('Linked lists', () => {
   const list1 = [
@@ -48,6 +48,10 @@ describe('Linked lists', () => {
   it('get max value from list', () => {
     const max = getMax(list1)
     expect(max).toEqual(12)
+  })
+  it('remove item from list', () => {
+    const newArr = removeListItem(list1, 2)
+    expect(newArr[1].value).toEqual(-1)
   })
   it('insert value in sorted list', () => {
     insertValue(list1, 4)
