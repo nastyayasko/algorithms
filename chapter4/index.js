@@ -37,3 +37,11 @@ const removeItem = (arr, index) => {
   arr.length -= 1
   return arr
 }
+
+
+module.exports = {
+  getSampleVariance,
+  getStandardDeviation,
+  getMiddle,
+  removeItem,
+}
