@@ -3,11 +3,13 @@
 // 2
 
 const getMax = list => {
-  let max = list[0].value;
-  for (let i = 1; i < list.length; i++) {
-    if (list[i].value > max) {
-      max = list[i].value
-    }
+  let currentItem = list[0]
+  let max = currentItem.value;
+  while (currentItem.next != null) {
+    currentItem = list.find(({ value }) => value ===  currentItem.next)
+      if (currentItem.value > max) {
+        max = currentItem.value
+      }
   }
   return max;
 }
@@ -34,16 +36,16 @@ const addToBottom = (list, value) => {
 
 // 6
 const removeListItem = (list, itemValue) => {
-  let index;
+  let index = null;
   const item = list.find((listItem, i) => {
     if (listItem.value === itemValue) {
       index = i
       return listItem
     }
   })
-  list[index-1].next = item.next
+  list[index - 1].next = item.next
   if (item.next !== null) {
-    list[index+1].prev = item.prev
+    list[index + 1].prev = item.prev
   }
   list.splice(index, 1)
   return list
@@ -52,44 +54,96 @@ const removeListItem = (list, itemValue) => {
 // 8
 
 const insertValue = (list, value) => {
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].value > value) {
-      list.splice(3, 0, { value })
-      break;
-    }
+  let currentItem = list[0]
+  let index = 0
+  if (value < currentItem.value) {
+    list.splice(index, 0, { value, prev: currentItem.prev, next: currentItem.value })
+    list.forEach(item => {
+      if (item.value === currentItem.value) {
+        item.prev = value
+      }
+    })
+    return
   }
+  while (value > currentItem.value) {
+    if (currentItem.next == null) {
+      list.forEach((item, i) => {
+        if (item.value === currentItem.value) {
+          item.next = value
+          index = i + 1
+        }
+      })
+      list.splice(index, 0, { value, prev: currentItem.value, next: null })
+      return
+    }
+    currentItem = list.find((listItem, i) => {
+      if (listItem.value === currentItem.next) {
+        index = i
+        return listItem
+      }
+    })
+  }
+  list.splice(index, 0, { value, prev: currentItem.prev, next: currentItem.value })
+  list.forEach(item => {
+    if (item.value === currentItem.value) {
+      item.prev = value
+    }
+  })
 }
 
 // 9
 const isSorted = list => {
-  for (let i = 1; i < list.length; i++) {
-    if (list[i].value < list[i-1].value) {
+  let currentItem = list[0]
+  while (currentItem.next != null) {
+    const nextItem = list.find(({ value }) => value ===  currentItem.next)
+    if (nextItem.value < currentItem.value) {
       return false
     }
+    currentItem = nextItem
   }
   return true
 }
 
 // 11
 
-class Planet {
-  constructor(name, distance, mass, diameter) {
-    this.name = name;
-    this.distance = distance;
-    this.mass = mass;
-    this.diameter = diameter;
-  }
-}
-
 const getPlanetList = (list, condition = 'distance') => {
+  const getMin = (list, condition, next)=> {
+    let currentItem = list[0]
+    let min = currentItem[condition];
+    while (currentItem[next] != null) {
+      currentItem = list.find(({ name }) => name ===  currentItem[next])
+      if (currentItem[condition] < min) {
+        min = currentItem.value
+      }
+    }
+    return list.find(item => item[condition] === min);
+  }
   if (condition === 'distance') {
-    return list.sort((a, b) => a.distance - b.distance)
+    let currentItem = getMin(list, condition, 'nextDistance')
+    const sortList = [currentItem]
+    while (currentItem.nextDistance != null) {
+      currentItem = list.find(({ name }) => name ===  currentItem.nextDistance)
+      sortList.push(currentItem)
+    }
+    return sortList
   }
   if (condition === 'mass') {
-    return list.sort((a, b) => a.mass - b.mass)
+    let currentItem = getMin(list, condition, 'nextMass')
+    const sortList = [currentItem]
+    while (currentItem.nextMass != null) {
+      currentItem = list.find(({ name }) => name ===  currentItem.nextMass)
+      sortList.push(currentItem)
+    }
+    return sortList
   }
   if (condition === 'diameter') {
-    return list.sort((a, b) => a.diameter - b.diameter)
+    let currentItem = getMin(list, condition, 'nextDiameter')
+    const sortList = [currentItem]
+    while (currentItem.nextDiameter != null) {
+      currentItem = list.find(({ name }) => name ===  currentItem.nextDiameter)
+      sortList.push(currentItem)
+    }
+    return sortList
   }
 }
 
