@@ -1,0 +1,22 @@
+{
+  "name": "algorithms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "chapter3/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nastyayasko/algorithms.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nastyayasko/algorithms/issues"
+  },
+  "homepage": "https://github.com/nastyayasko/algorithms#readme",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}
