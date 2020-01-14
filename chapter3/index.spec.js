@@ -1,296 +1,166 @@
 const {
-  getMax,
-  addToTop,
-  addToBottom,
-  removeListItem,
-  insertValue,
-  isSorted,
-  getPlanetList,
-  isListWithLoop
+  List,
+  BidirectionalList,
+  PlanetList,
 } = require('./index')
 
 describe('Linked lists', () => {
-  const list1 = [
-    {
-      value: 5,
-      next: 2,
-    },
-    {
-      value: 2,
-      next: -1,
-    },
-    {
-      value: -1,
-      next: 12,
-    },
-    {
-      value: 12,
-      next: 0,
-    },
-    {
-      value: 0,
-      next: null,
-    },
-  ]
-  const list2 = [
-    {
-      value: 1,
-      next: 2,
-    },
-    {
-      value: 2,
-      next: 3,
-    },
-    {
-      value: 3,
-      next: 4,
-    },
-    {
-      value: 4,
-      next: 5,
-    },
-    {
-      value: 5,
-      next: null,
-    },
-  ]
+  const list1 = new List()
+  list1.addItem({ value: 5 })
+  list1.addItem({ value: 2 })
+  list1.addItem({ value: -1 })
+  list1.addItem({ value: 12 })
+  list1.addItem({ value: 0 })
+  const list2 = new List()
+  list2.addItem({ value: 1 })
+  list2.addItem({ value: 2 })
+  list2.addItem({ value: 3 })
+  list2.addItem({ value: 4 })
+  list2.addItem({ value: 5 })
   it('get max value from list', () => {
-    const max = getMax(list1)
+
+    const max = list1.getMax()
     expect(max).toEqual(12)
   })
   it('add item to the top of list', () => {
-    const list = [
-      {
-        value: 'A',
-        prev: null,
-        next: 'B',
-      },
-      {
-        value: 'B',
-        prev: 'A',
-        next: 'C',
-      },
-      {
-        value: 'C',
-        prev: 'B',
-        next: 'D',
-      },
-      {
-        value: 'D',
-        prev: 'C',
-        next: null,
-      },
-    ]
-    const newList = addToTop(list, 'J')
-    expect(newList[0]).toEqual({value: 'J', prev: null, next: 'A'})
-    expect(newList[1]).toEqual({value: 'A', prev: 'J', next: 'B'})
+    const list = new BidirectionalList()
+    list.addToTop({value: 'B'})
+    expect(list.top.next.value).toEqual('B')
+    expect(list.bottom.prev.value).toEqual('B')
+    expect(list.last.value).toEqual('B')
+    list.addToTop({value: 'A'})
+    expect(list.top.next.value).toEqual('A')
+    expect(list.top.next.next.value).toEqual('B')
+    expect(list.bottom.prev.value).toEqual('B')
   })
   it('add item to the bottom of list', () => {
-    const list = [
-      {
-        value: 'A',
-        prev: null,
-        next: 'B',
-      },
-      {
-        value: 'B',
-        prev: 'A',
-        next: 'C',
-      },
-      {
-        value: 'C',
-        prev: 'B',
-        next: 'D',
-      },
-      {
-        value: 'D',
-        prev: 'C',
-        next: null,
-      },
-    ]
-    const newList = addToBottom(list, 'J')
-    expect(newList[newList.length - 1]).toEqual({value: 'J', prev: 'D', next: null})
-    expect(newList[newList.length - 2]).toEqual({value: 'D', prev: 'C', next: 'J'})
+    const list = new BidirectionalList()
+    list.addToBottom({value: 'A'})
+    expect(list.top.next.value).toEqual('A')
+    expect(list.bottom.prev.value).toEqual('A')
+    expect(list.last.value).toEqual( 'A')
+    list.addToBottom({value: 'B'})
+    expect(list.top.next.next.value).toEqual('B')
+    expect(list.bottom.prev.value).toEqual('B')
+    expect(list.last.value).toEqual('B')
   })
   it('remove item from list', () => {
-    const newArr = removeListItem(list1, 2)
-    expect(newArr[1].value).toEqual(-1)
+    const list = new BidirectionalList()
+    list.addToBottom({value: 'A'})
+    list.addToBottom({value: 'B'})
+    list.addToBottom({value: 'C'})
+    list.addToBottom({value: 'D'})
+    list.removeListItem('B')
+    expect(list.getItem('A').next.value).toEqual('C')
+    expect(list.getItem('C').prev.value).toEqual('A')
+    list.removeListItem('A')
+    expect(list.top.next.value).toEqual('C')
+    expect(list.getItem('C').prev.value).toEqual(null)
+    list.removeListItem('D')
+    expect(list.bottom.prev.value).toEqual('C')
+    expect(list.getItem('C').next.value).toEqual(null)
+    expect(list.last.value).toEqual('C')
   })
   it('insert value in sorted list', () => {
-    const list = [
-      {
-        value: 1,
-        prev: null,
-        next: 2,
-      },
-      {
-        value: 2,
-        prev: 1,
-        next: 3,
-      },
-      {
-        value: 3,
-        prev: 2,
-        next: 5,
-      },
-      {
-        value: 5,
-        prev: 3,
-        next: 6,
-      },
-      {
-        value: 6,
-        prev: 5,
-        next: null,
-      },
-    ]
-    insertValue(list, 4)
-    expect(list[3].value).toEqual(4)
-    expect(list[4].prev).toEqual(4)
-    insertValue(list, 0)
-    expect(list[0].value).toEqual(0)
-    expect(list[1].prev).toEqual(0)
-    insertValue(list, 7)
-    expect(list[7].value).toEqual(7)
-    expect(list[6].next).toEqual(7)
+    const list = new BidirectionalList()
+    list.addToBottom({value: 1})
+    list.addToBottom({value: 2})
+    list.addToBottom({value: 4})
+    list.addToBottom({value: 5})
+    list.insertValue(3)
+    expect(list.getItem(2).next.value).toEqual(3)
+    expect(list.getItem(4).prev.value).toEqual(3)
+    expect(list.getItem(3).prev.value).toEqual(2)
+    expect(list.getItem(3).next.value).toEqual(4)
+    list.insertValue(6)
+    expect(list.getItem(5).next.value).toEqual(6)
+    expect(list.bottom.prev.value).toEqual(6)
+    expect(list.last.value).toEqual(6)
+    expect(list.getItem(6).prev.value).toEqual(5)
+    expect(list.getItem(6).next.value).toEqual(null)
+    list.insertValue(0)
+    expect(list.getItem(1).prev.value).toEqual(0)
+    expect(list.top.next.value).toEqual(0)
+    expect(list.getItem(0).prev.value).toEqual(null)
+    expect(list.getItem(0).next.value).toEqual(1)
   })
   it(`Should return true/false if list is/isn't sorted`, () => {
-    expect(isSorted(list1)).toBeFalsy()
-    expect(isSorted(list2)).toBeTruthy()
+    expect(list1.isSorted()).toBeFalsy()
+    expect(list2.isSorted()).toBeTruthy()
   })
   it(`Should sort list according to condition`, () => {
-    const planets = [
-      {
-        name: 'Mercury',
-        distance: 57900000,
-        mass: 1,
-        diameter: 4878,
-        nextDistance: 'Venus',
-        nextMass: 'Mars',
-        nextDiameter: 'Mars',
-      },
-      {
-        name: 'Venus',
-        distance: 108160000,
-        mass: 3,
-        diameter: 12104,
-        nextDistance: 'Earth',
-        nextMass: 'Earth',
-        nextDiameter: 'Earth',
-      },
-      {
-        name: 'Earth',
-        distance: 149600000,
-        mass: 4,
-        diameter: 12756,
-        nextDistance: 'Mars',
-        nextMass: 'Uranus',
-        nextDiameter: 'Neptune',
-      },
-      {
-        name: 'Mars',
-        distance: 227936640,
-        mass: 2,
-        diameter: 6794,
-        nextDistance: 'Jupiter',
-        nextMass: 'Venus',
-        nextDiameter: 'Venus',
-      },
-      {
-        name: 'Jupiter',
-        distance: 778369000,
-        mass: 8,
-        diameter: 142984,
-        nextDistance: 'Saturn',
-        nextMass: null,
-        nextDiameter: null,
-      },
-      {
-        name: 'Saturn',
-        distance: 1427034000,
-        mass: 7,
-        diameter: 120536,
-        nextDistance: 'Uranus',
-        nextMass: 'Jupiter',
-        nextDiameter: 'Jupiter',
-      },
-      {
-        name: 'Uranus',
-        distance: 2870658186,
-        mass: 5,
-        diameter: 51118,
-        nextDistance: 'Neptune',
-        nextMass: 'Neptune',
-        nextDiameter: 'Saturn',
-      },
-      {
-        name: 'Neptune',
-        distance: 4496976000,
-        mass: 6,
-        diameter: 49532,
-        nextDistance: null,
-        nextMass: 'Saturn',
-        nextDiameter: 'Uranus',
-      },
-    ]
-
-    expect(getPlanetList(planets)[4].name).toBe('Jupiter')
-    expect(getPlanetList(planets, 'mass')[4].name).toBe('Uranus')
-    expect(getPlanetList(planets, 'diameter')[4].name).toBe('Neptune')
+    const planets = new PlanetList()
+    planets.addPlanet({
+       name: 'Mercury',
+       distance: 57900000,
+       mass: 1,
+       diameter: 4878,
+     })
+    planets.addPlanet({
+      name: 'Venus',
+      distance: 108160000,
+      mass: 3,
+      diameter: 12104,
+     })
+    planets.addPlanet({
+      name: 'Earth',
+      distance: 149600000,
+      mass: 4,
+      diameter: 12756,
+     })
+    planets.addPlanet({
+      name: 'Mars',
+      distance: 227936640,
+      mass: 2,
+      diameter: 6794,
+     })
+    planets.addPlanet({
+      name: 'Jupiter',
+      distance: 778369000,
+      mass: 8,
+      diameter: 142984,
+     })
+    planets.addPlanet({
+      name: 'Saturn',
+      distance: 1427034000,
+      mass: 7,
+      diameter: 120536,
+     })
+    planets.addPlanet({
+      name: 'Uranus',
+      distance: 2870658186,
+      mass: 5,
+      diameter: 51118,
+     })
+    planets.addPlanet({
+      name: 'Neptune',
+      distance: 4496976000,
+      mass: 6,
+      diameter: 49532,
+     })
+    expect(planets.getPlanetListByDistance()).toEqual( ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus',  'Neptune'])
+    expect(planets.getPlanetListByMass()).toEqual(['Mercury', 'Mars', 'Venus', 'Earth', 'Uranus',  'Neptune', 'Saturn', 'Jupiter'])
+    expect(planets.getPlanetListByDiameter()).toEqual(['Mercury', 'Mars', 'Venus', 'Earth', 'Neptune', 'Uranus', 'Saturn',  'Jupiter'])
   })
   it(`Should return true/false if list with/without loop`, () => {
-    const list2 = [
-      {
-        value: 'A',
-        next: 'B',
-      },
-      {
-        value: 'B',
-        next: 'C',
-      },
-      {
-        value: 'C',
-        next: 'D',
-      },
-      {
-        value: 'D',
-        next: 'B',
-      },
-    ]
-    const list3 = [
-      {
-        value: 'A',
-        next: 'B',
-      },
-      {
-        value: 'B',
-        next: 'C',
-      },
-      {
-        value: 'C',
-        next: 'D',
-      },
-      {
-        value: 'D',
-        next: null,
-      },
-    ]
-    const list4 = [
-      {
-        value: 'A',
-        next: null,
-      }
-    ]
-    const list5 = [
-      {
-        value: 'A',
-        next: 'A',
-      }
-    ]
+    const list1 = new List()
+    list1.addItem({ value: 'A'})
+    list1.addItem({ value: 'B' })
+    list1.addItem({ value: 'C' })
+    list1.addItem({ value: 'D' })
+    list1.addLoopItem({ value: 'E' }, 'C')
+    const list2 = new List()
+    const list3 = new List()
+    list3.addItem({ value: 'A'})
+    list3.addItem({ value: 'B' })
+    list3.addItem({ value: 'C' })
+    list3.addItem({ value: 'D' })
+    const list4 = new List()
+    list4.addLoopItem({ value: 'A' }, 'A')
 
-    expect(isListWithLoop(list2)).toBeTruthy()
-    expect(isListWithLoop(list3)).toBeFalsy()
-    expect(isListWithLoop(list4)).toBeFalsy()
-    expect(isListWithLoop(list5)).toBeTruthy()
+    expect(list1.isListWithLoop()).toBeTruthy()
+    expect(list2.isListWithLoop()).toBeFalsy()
+    expect(list3.isListWithLoop()).toBeFalsy()
+    expect(list4.isListWithLoop()).toBeTruthy()
   })
 })

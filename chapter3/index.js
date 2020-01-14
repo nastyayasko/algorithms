@@ -1,179 +1,268 @@
-// 1
+class List {
+  constructor() {
+    this.top = {next: null}
+    this.last = {}
+  }
 
-// 2
+  getItem(itemValue) {
+    if (!this.top.next) return null
+    let currentItem = this.top.next
+    while (currentItem) {
+      if (currentItem.value === itemValue) {
+        return currentItem
+      }
+      currentItem = currentItem.next
+    }
+  }
 
-const getMax = list => {
-  let currentItem = list[0]
-  let max = currentItem.value;
-  while (currentItem.next != null) {
-    currentItem = list.find(({ value }) => value ===  currentItem.next)
+  addItem(item) {
+    item.next = null
+    if (!this.top.next) {
+      this.top.next = item
+      this.last = item
+      return
+    }
+    this.last.next = item
+    this.last = item
+  }
+
+  addLoopItem(item, nextValue) {
+    if (!this.top.next) {
+      this.top.next = item
+      this.getItem(item.value).next = this.getItem(nextValue)
+      return
+    }
+    this.last.next = item
+    this.getItem(item.value).next = this.getItem(nextValue)
+    this.last = {}
+  }
+
+  // 2
+
+  getMax() {
+    if (!this.top.next) return null
+    let currentItem = this.top.next
+    let max = currentItem.value
+    while (currentItem.next) {
+      currentItem = currentItem.next
       if (currentItem.value > max) {
         max = currentItem.value
       }
-  }
-  return max;
-}
-
-// 3
-const addToTop = (list, value) => {
-  list[0].prev = value
-  const item ={value}
-  item.prev = null
-  item.next = list[0].value
-  list.unshift(item)
-  return list
-}
-
-// 4
-const addToBottom = (list, value) => {
-  list[list.length - 1].next = value
-  const item ={value}
-  item.prev = list[list.length - 1].value
-  item.next = null
-  list.push(item)
-  return list
-}
-
-// 6
-const removeListItem = (list, itemValue) => {
-  let index = null;
-  const item = list.find((listItem, i) => {
-    if (listItem.value === itemValue) {
-      index = i
-      return listItem
     }
-  })
-  list[index - 1].next = item.next
-  if (item.next !== null) {
-    list[index + 1].prev = item.prev
+    return max;
   }
-  list.splice(index, 1)
-  return list
+
+  // 9
+
+  isSorted() {
+    if (!this.top.next) return true
+    let currentItem = this.top.next
+    while (currentItem.next) {
+      const nextItem = currentItem.next
+      if (nextItem.value < currentItem.value) {
+        return false
+      }
+      currentItem = nextItem
+    }
+    return true
+  }
+
+  // 12
+
+  isListWithLoop() {
+    if (!this.top.next) return false;
+    let rabbit = this.top.next
+    if (rabbit.next == null) return false;
+    rabbit = rabbit.next
+    if (rabbit.next == null) return false;
+    let turtle = this.top.next
+    while (rabbit.value !== turtle.value) {
+      rabbit = rabbit.next
+      if (rabbit.next == null) return false;
+      rabbit = rabbit.next
+      if (rabbit.next == null) return false;
+      turtle = turtle.next
+    }
+    return true;
+  }
+
 }
 
-// 8
 
-const insertValue = (list, value) => {
-  let currentItem = list[0]
-  let index = 0
-  if (value < currentItem.value) {
-    list.splice(index, 0, { value, prev: currentItem.prev, next: currentItem.value })
-    list.forEach(item => {
-      if (item.value === currentItem.value) {
-        item.prev = value
-      }
-    })
-    return
+
+class BidirectionalList {
+  constructor() {
+    this.top = {value: null, next: null}
+    this.bottom = {value: null, prev: null}
+    this.last = {}
   }
-  while (value > currentItem.value) {
-    if (currentItem.next == null) {
-      list.forEach((item, i) => {
-        if (item.value === currentItem.value) {
-          item.next = value
-          index = i + 1
-        }
-      })
-      list.splice(index, 0, { value, prev: currentItem.value, next: null })
+
+  getItem(itemValue) {
+    if (!this.top.next) return null
+    let currentItem = this.top.next
+    while (currentItem) {
+      if (currentItem.value === itemValue) {
+        return currentItem
+      }
+      currentItem = currentItem.next
+    }
+  }
+
+  addFirstItem(item) {
+    item.prev = this.top
+    item.next = this.bottom
+    this.top.next = item
+    this.bottom.prev = item
+    this.last = item
+  }
+  // 3
+
+  addToTop(item) {
+    if (!this.top.next) {
+      this.addFirstItem(item)
       return
     }
-    currentItem = list.find((listItem, i) => {
-      if (listItem.value === currentItem.next) {
-        index = i
-        return listItem
-      }
-    })
+    item.prev = this.top
+    item.next = this.top.next
+    item.next.prev = item
+    this.top.next = item
   }
-  list.splice(index, 0, { value, prev: currentItem.prev, next: currentItem.value })
-  list.forEach(item => {
-    if (item.value === currentItem.value) {
-      item.prev = value
-    }
-  })
-}
 
-// 9
-const isSorted = list => {
-  let currentItem = list[0]
-  while (currentItem.next != null) {
-    const nextItem = list.find(({ value }) => value ===  currentItem.next)
-    if (nextItem.value < currentItem.value) {
-      return false
+  // 4
+
+  addToBottom (item) {
+    if (!this.bottom.prev) {
+      this.addFirstItem(item)
+      return
     }
-    currentItem = nextItem
+    item.prev = this.bottom.prev
+    item.next = this.bottom
+    item.prev.next = item
+    this.bottom.prev = item
+    this.last = item
   }
-  return true
+
+  // 6
+
+  removeListItem(itemValue) {
+    if (!this.top.next) return
+    let currentItem = this.top.next
+    while (currentItem) {
+      if (currentItem.value === itemValue) {
+        if (currentItem.next.value == null) {
+          this.last = currentItem.prev
+        }
+        currentItem.prev.next = currentItem.next
+        currentItem.next.prev = currentItem.prev
+        return
+      }
+      currentItem = currentItem.next
+    }
+  }
+
+  // 8
+
+  insertValue(value) {
+    const item = { value }
+    if (!this.top.next) {
+      this.addFirstItem(item)
+      return
+    }
+    let currentItem = this.top.next
+    while (currentItem.value !== null && currentItem.value < value) {
+      currentItem = currentItem.next
+    }
+    item.prev = currentItem.prev
+    item.next = currentItem
+    currentItem.prev.next = item
+    currentItem.prev = item
+    if (currentItem.value == null) {
+      this.last = currentItem.prev
+    }
+  }
+
 }
 
 // 11
 
-const getPlanetList = (list, condition = 'distance') => {
-  const getMin = (list, condition, next)=> {
-    let currentItem = list[0]
-    let min = currentItem[condition];
-    while (currentItem[next] != null) {
-      currentItem = list.find(({ name }) => name ===  currentItem[next])
-      if (currentItem[condition] < min) {
-        min = currentItem.value
-      }
+class PlanetList {
+  constructor() {
+    this.top = {
+      nextDistance: null,
+      nextMass: null,
+      nextDiameter: null,
     }
-    return list.find(item => item[condition] === min);
   }
-  if (condition === 'distance') {
-    let currentItem = getMin(list, condition, 'nextDistance')
-    const sortList = [currentItem]
-    while (currentItem.nextDistance != null) {
-      currentItem = list.find(({ name }) => name ===  currentItem.nextDistance)
-      sortList.push(currentItem)
+  addPlanet(item) {
+    item.nextDistance = null
+    item.nextMass = null
+    item.nextDiameter = null
+    if (!this.top.nextDistance) {
+      this.top.nextDistance = item
+      this.top.nextMass = item
+      this.top.nextDiameter = item
+      return
     }
-    return sortList
-  }
-  if (condition === 'mass') {
-    let currentItem = getMin(list, condition, 'nextMass')
-    const sortList = [currentItem]
-    while (currentItem.nextMass != null) {
-      currentItem = list.find(({ name }) => name ===  currentItem.nextMass)
-      sortList.push(currentItem)
+    let currentItemByDistance = this.top.nextDistance
+    while (currentItemByDistance.nextDistance !== null && currentItemByDistance.nextDistance.distance < item.distance) {
+      currentItemByDistance = currentItemByDistance.nextDistance
     }
-    return sortList
-  }
-  if (condition === 'diameter') {
-    let currentItem = getMin(list, condition, 'nextDiameter')
-    const sortList = [currentItem]
-    while (currentItem.nextDiameter != null) {
-      currentItem = list.find(({ name }) => name ===  currentItem.nextDiameter)
-      sortList.push(currentItem)
-    }
-    return sortList
-  }
-}
+    item.nextDistance = currentItemByDistance.nextDistance
+    currentItemByDistance.nextDistance = item
 
-// 12
+    let currentItemByMass = this.top.nextMass
+    while (currentItemByMass.nextMass !== null && currentItemByMass.nextMass.mass < item.mass) {
+      currentItemByMass = currentItemByMass.nextMass
+    }
+    item.nextMass = currentItemByMass.nextMass
+    currentItemByMass.nextMass = item
 
-const isListWithLoop = list => {
-  if (!list.length || list[0].next == null) return false;
-  let turtle = list[0];
-  let rabbit = list.find(item => item.value === turtle.next);
-  if (rabbit.next == null) return false;
-  while (rabbit.value !== turtle.value) {
-    turtle = list.find(item => item.value === turtle.next)
-    rabbit = list.find(item => item.value === rabbit.next)
-    if (rabbit.next == null) return false;
-    if (rabbit.value === turtle.value) return true;
-    rabbit = list.find(item => item.value === rabbit.next)
-    if (rabbit.next == null) return false;
+    let currentItemByDiameter = this.top.nextDiameter
+    while (currentItemByDiameter.nextDiameter !== null && currentItemByDiameter.nextDiameter.diameter < item.diameter) {
+      currentItemByDiameter = currentItemByDiameter.nextDiameter
+    }
+    item.nextDiameter = currentItemByDiameter.nextDiameter
+    currentItemByDiameter.nextDiameter = item
   }
-  return true;
+
+  getPlanetListByDistance() {
+    if (!this.top.nextDistance) return []
+    const arr = []
+    let currentItem = this.top.nextDistance
+    while(currentItem) {
+      arr.push(currentItem.name)
+      currentItem = currentItem.nextDistance
+    }
+    return arr
+  }
+
+  getPlanetListByMass() {
+    if (!this.top.nextMass) return []
+    const arr = []
+    let currentItem = this.top.nextMass
+    while(currentItem) {
+      arr.push(currentItem.name)
+      currentItem = currentItem.nextMass
+    }
+    return arr
+  }
+
+  getPlanetListByDiameter() {
+    if (!this.top.nextDiameter) return []
+    const arr = []
+    let currentItem = this.top.nextDiameter
+    while(currentItem) {
+      arr.push(currentItem.name)
+      currentItem = currentItem.nextDiameter
+    }
+    return arr
+  }
 }
 
 
 module.exports = {
-  getMax,
-  addToTop,
-  addToBottom,
-  removeListItem,
-  insertValue,
-  isSorted,
-  getPlanetList,
-  isListWithLoop,
-}
+  List,
+  BidirectionalList,
+  PlanetList,
+ }
 
