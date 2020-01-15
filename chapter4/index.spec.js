@@ -5,6 +5,7 @@ const {
   removeItem,
   topTriangle,
   topLeftTriangle,
+  diagonalArray,
   distanceArray,
   topTriangleWithBreak,
   sumOfTriangleArrays,
@@ -44,6 +45,13 @@ describe('Arrays', () => {
     expect(triangle[0][4]).toEqual(1)
     expect(triangle[4][0]).toEqual(1)
     expect(triangle[4][4]).toEqual(0)
+  })
+  it('Should return diagonal array', () => {
+    const arr = diagonalArray(4,6)
+    expect(arr[0][0]).toEqual(1)
+    expect(arr[0][5]).toEqual(0)
+    expect(arr[3][0]).toEqual(1)
+    expect(arr[3][5]).toEqual(1)
   })
   it('Should return array with distances', () => {
     const arr = distanceArray(6, 9)

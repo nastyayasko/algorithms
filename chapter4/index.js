@@ -75,6 +75,26 @@ const topLeftTriangle = size => {
 }
 
 
+// 7
+
+const diagonalArray = (row, col) => {
+  const arr = []
+  const r = col / row
+  for (let i = 0; i < row; i++) {
+    let arrRow = []
+    for (let j = 0; j < col; j++) {
+      const d = Math.ceil((i+1) * r)
+      if (j + 1 <= d) {
+        arrRow.push(1)
+      } else {
+        arrRow.push(0)
+      }
+    }
+    arr.push(arrRow)
+  }
+  return arr
+}
+
 // 9
 
 const distanceArray = (row, col) => {
@@ -156,6 +176,7 @@ module.exports = {
   removeItem,
   topTriangle,
   topLeftTriangle,
+  diagonalArray,
   distanceArray,
   topTriangleWithBreak,
   sumOfTriangleArrays,
