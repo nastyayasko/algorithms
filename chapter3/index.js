@@ -1,12 +1,12 @@
 class List {
   constructor() {
-    this.top = {next: null}
+    this.top = null
     this.last = {}
   }
 
-  getItem(itemValue) {
-    if (!this.top.next) return null
-    let currentItem = this.top.next
+  findItem(itemValue) {
+    if (!this.top) return null
+    let currentItem = this.top
     while (currentItem) {
       if (currentItem.value === itemValue) {
         return currentItem
@@ -17,8 +17,8 @@ class List {
 
   addItem(item) {
     item.next = null
-    if (!this.top.next) {
-      this.top.next = item
+    if (!this.top) {
+      this.top = item
       this.last = item
       return
     }
@@ -27,21 +27,21 @@ class List {
   }
 
   addLoopItem(item, nextValue) {
-    if (!this.top.next) {
-      this.top.next = item
-      this.getItem(item.value).next = this.getItem(nextValue)
+    if (!this.top) {
+      this.top = item
+      this.findItem(item.value).next = this.findItem(nextValue)
       return
     }
     this.last.next = item
-    this.getItem(item.value).next = this.getItem(nextValue)
+    this.findItem(item.value).next = this.findItem(nextValue)
     this.last = {}
   }
 
   // 2
 
   getMax() {
-    if (!this.top.next) return null
-    let currentItem = this.top.next
+    if (!this.top) return null
+    let currentItem = this.top
     let max = currentItem.value
     while (currentItem.next) {
       currentItem = currentItem.next
@@ -55,8 +55,8 @@ class List {
   // 9
 
   isSorted() {
-    if (!this.top.next) return true
-    let currentItem = this.top.next
+    if (!this.top) return true
+    let currentItem = this.top
     while (currentItem.next) {
       const nextItem = currentItem.next
       if (nextItem.value < currentItem.value) {
@@ -70,12 +70,12 @@ class List {
   // 12
 
   isListWithLoop() {
-    if (!this.top.next) return false;
-    let rabbit = this.top.next
+    if (!this.top) return false;
+    let rabbit = this.top
     if (rabbit.next == null) return false;
     rabbit = rabbit.next
     if (rabbit.next == null) return false;
-    let turtle = this.top.next
+    let turtle = this.top
     while (rabbit.value !== turtle.value) {
       rabbit = rabbit.next
       if (rabbit.next == null) return false;
@@ -90,16 +90,16 @@ class List {
 
 
 
+
 class BidirectionalList {
   constructor() {
-    this.top = {value: null, next: null}
-    this.bottom = {value: null, prev: null}
-    this.last = {}
+    this.top = null
+    this.bottom = null
   }
 
-  getItem(itemValue) {
-    if (!this.top.next) return null
-    let currentItem = this.top.next
+  findItem(itemValue) {
+    if (!this.top) return null
+    let currentItem = this.top
     while (currentItem) {
       if (currentItem.value === itemValue) {
         return currentItem
@@ -109,76 +109,87 @@ class BidirectionalList {
   }
 
   addFirstItem(item) {
-    item.prev = this.top
-    item.next = this.bottom
-    this.top.next = item
-    this.bottom.prev = item
-    this.last = item
+    item.prev = null
+    item.next = null
+    this.top = item
+    this.bottom = item
   }
   // 3
 
   addToTop(item) {
-    if (!this.top.next) {
+    if (!this.top) {
       this.addFirstItem(item)
       return
     }
-    item.prev = this.top
-    item.next = this.top.next
-    item.next.prev = item
-    this.top.next = item
+    item.prev = null
+    item.next = this.top
+    this.top.prev = item
+    this.top = item
   }
 
   // 4
 
   addToBottom (item) {
-    if (!this.bottom.prev) {
+    if (!this.bottom) {
       this.addFirstItem(item)
       return
     }
-    item.prev = this.bottom.prev
-    item.next = this.bottom
-    item.prev.next = item
-    this.bottom.prev = item
-    this.last = item
+    item.prev = this.bottom
+    item.next = null
+    this.bottom.next = item
+    this.bottom = item
   }
 
   // 6
 
-  removeListItem(itemValue) {
-    if (!this.top.next) return
-    let currentItem = this.top.next
-    while (currentItem) {
-      if (currentItem.value === itemValue) {
-        if (currentItem.next.value == null) {
-          this.last = currentItem.prev
-        }
-        currentItem.prev.next = currentItem.next
-        currentItem.next.prev = currentItem.prev
-        return
-      }
-      currentItem = currentItem.next
+  removeListItem(item) {
+    if (!this.top) return
+    if (!item.prev) {
+      this.top = item.next
+      this.top.prev = null
+      return
     }
+    if (!item.next) {
+      this.bottom = item.prev
+      this.bottom.next = null
+      return
+    }
+    item.prev.next = item.next
+    item.next.prev = item.prev
+    return
   }
+
 
   // 8
 
   insertValue(value) {
     const item = { value }
-    if (!this.top.next) {
+    if (!this.top) {
       this.addFirstItem(item)
       return
     }
-    let currentItem = this.top.next
-    while (currentItem.value !== null && currentItem.value < value) {
+    if (this.top.value > value) {
+      this.top.prev = item
+      item.prev = null
+      item.next = this.top
+      this.top = item
+      return
+    }
+    if (this.bottom.value < value) {
+      this.bottom.next = item
+      item.prev = this.bottom
+      item.next = null
+      this.bottom = item
+      return
+    }
+    let currentItem = this.top
+    while (currentItem.value < value) {
       currentItem = currentItem.next
     }
     item.prev = currentItem.prev
     item.next = currentItem
     currentItem.prev.next = item
     currentItem.prev = item
-    if (currentItem.value == null) {
-      this.last = currentItem.prev
-    }
   }
 
 }
