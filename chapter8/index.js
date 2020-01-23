@@ -205,7 +205,7 @@ class HashTableOpenPseudoRandom {
   }
 
   lineProb(index, step) {
-    const pseudo = Math.round(1.5 * index + 0.75)
+    const pseudo = Math.round(2.3 * index + 0.75)
     return ((index + step * pseudo) % this.table.length)
   }
 
@@ -236,15 +236,18 @@ class HashTableOpenPseudoRandom {
     }
     let findIndex = index
     let currentItem = this.table[findIndex]
+    let step = 1
     while(currentItem) {
       if (currentItem.key === key) return currentItem
       checkedItems[findIndex] = true
       if (checkedItems.every(item => item)) return null
       findIndex = this.lineProb(index, step)
       currentItem = this.table[findIndex]
+      step++
     }
     return null
   }
+
   removeItem(key) {
     const index = this.hash(key)
     if (!this.table[index]) return
@@ -254,6 +257,7 @@ class HashTableOpenPseudoRandom {
     }
     let removeIndex = index
     let currentItem = this.table[removeIndex]
+    let step = 1
     while(currentItem) {
       if (currentItem.key === key) {
         this.table[removeIndex] = {key: null}
@@ -264,6 +268,7 @@ class HashTableOpenPseudoRandom {
       if (checkedItems.every(item => item)) return null
       removeIndex = this.lineProb(index, step)
       currentItem = this.table[removeIndex]
+      step++
     }
   }
 }
@@ -312,12 +317,14 @@ class HashTableOpenDoubleHash {
     }
     let findIndex = index
     let currentItem = this.table[findIndex]
+    let step = 1
     while(currentItem) {
       if (currentItem.key === key) return currentItem
       checkedItems[findIndex] = true
       if (checkedItems.every(item => item)) return null
       findIndex = this.hash2(key, step)
       currentItem = this.table[findIndex]
+      step++
     }
     return null
   }
@@ -330,6 +337,7 @@ class HashTableOpenDoubleHash {
     }
     let removeIndex = index
     let currentItem = this.table[removeIndex]
+    let step = 1
     while(currentItem) {
       if (currentItem.key === key) {
         this.table[removeIndex] = {key: null}
@@ -340,6 +348,7 @@ class HashTableOpenDoubleHash {
       if (checkedItems.every(item => item)) return null
       removeIndex = this.hash2(key, step)
       currentItem = this.table[removeIndex]
+      step++
     }
   }
 }
@@ -418,23 +427,24 @@ class OrderlyQuadratic {
     while(currentItem) {
       if (key < currentItem.key  && this.hash(currentItem.key) === index) return
       if (currentItem.key === key) {
-        // step++
-        // let nextIndex = this.lineProb(index, step)
-        // let nextItem = this.table[nextIndex]
-        // while (nextItem && this.hash(nextItem.key) === index) {
-        //   if (nextItem.key > currentItem.key){
-        //   console.log(currentItem, nextItem)
-        //     currentItem = nextItem
-        //     removeIndex = this.lineProb(index, step)
-        //     nextItem = this.table[removeIndex]
-        //     step++
-        //   } else {
-        //     console.log(currentItem, nextItem)
-        //     removeIndex = this.lineProb(index, step)
-        //     nextItem = this.table[removeIndex]
-        //     step++
-        //   }
-        // }
+        let nextIndex = this.lineProb(index, step)
+        let nextItem = this.table[nextIndex]
+        while (nextItem && !checkedItems.every(item => item)) {
+          if (nextItem.key > currentItem.key && this.hash(nextItem.key) === index && !checkedItems[nextIndex]){
+            this.table[removeIndex] = nextItem
+            this.table[nextIndex] = currentItem
+            checkedItems[removeIndex] = true
+            step++
+            removeIndex = nextIndex
+            nextIndex = this.lineProb(index, step)
+            nextItem = this.table[nextIndex]
+          } else {
+            checkedItems[removeIndex] = true
+            step++
+            nextIndex = this.lineProb(index, step)
+            nextItem = this.table[nextIndex]
+          }
+        }
         this.table[removeIndex] = null
         this.count--
         return

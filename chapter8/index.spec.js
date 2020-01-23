@@ -246,17 +246,15 @@ describe('Hash-table', () => {
     table.addItem({
       key: 0,
     })
-    console.log(table.table)
     expect(table.findItem(20).key).toEqual(20)
     expect(table.findItem(101).key).toEqual(101)
     expect(table.findItem(0)).toEqual(null)
     expect(table.findItem(15)).toEqual(null)
     table.removeItem(40)
-    console.log(table.table)
     expect(table.findItem(40)).toEqual(null)
-    // table.addItem({
-    //   key: 0,
-    // })
-    // expect(table.findItem(0).key).toEqual(0)
+    table.addItem({
+      key: 0,
+    })
+    expect(table.findItem(0).key).toEqual(0)
   })
 })
